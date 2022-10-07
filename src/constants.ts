@@ -27,3 +27,9 @@ export enum UploadType {
     AUDIO = 'audio',
     ANY = 'any',
 }
+
+export enum Permissions {
+    EVERYONE = 'everyone',
+    FRIENDS = 'friends',
+    NOBODY = 'nobody',
+}

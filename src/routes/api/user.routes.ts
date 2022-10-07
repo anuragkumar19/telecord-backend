@@ -2,10 +2,19 @@ import { Router } from 'express'
 import { UploadType } from '../../constants'
 import {
     addSecondaryEmail,
+    blockUser,
+    getBlockedUsers,
+    getFriendsDetail,
     getLoggedInUser,
     getOtpForSecondaryEmail,
+    getUser,
     makeSecondaryEmailPrimary,
     removeSecondaryEmail,
+    searchUser,
+    sendOrAcceptRequest,
+    unblockUser,
+    unfriendOrCancelFriendRequest,
+    updateAccountPrivacy,
     updateBio,
     updateName,
     updatePassword,
@@ -16,8 +25,9 @@ import {
 } from '../../controllers/user.controller'
 import { authGuard, verifyPassword } from '../../middleware/auth.middleware'
 import { upload } from '../../middleware/upload.middleware'
-import { validate } from '../../middleware/validate.middleware'
+import { validate, validateParams } from '../../middleware/validate.middleware'
 import {
+    accountPrivacySchema,
     secondaryEmailSchema,
     updateBioSchema,
     updateNameSchema,
@@ -32,6 +42,7 @@ export const router = Router()
 router.use(authGuard)
 
 router.get('/me', getLoggedInUser)
+router.get('/friends', getFriendsDetail)
 
 router.put('/name', validate(updateNameSchema), updateName)
 router.put('/username', validate(updateUsernameSchema), updateUsername)
@@ -48,6 +59,11 @@ router.put(
     uploadAvatar
 )
 router.put('/email', verifyPassword(), makeSecondaryEmailPrimary)
+router.put(
+    '/account-privacy',
+    validate(accountPrivacySchema),
+    updateAccountPrivacy
+)
 
 router
     .route('/secondary-email')
@@ -60,3 +76,15 @@ router.post(
     validate(verifySecondaryEmailSchema),
     verifySecondaryEmail
 )
+
+router.get('/search', searchUser)
+router.get('/blocked', getBlockedUsers)
+
+router
+    .route('/:id')
+    .get(validateParams('id'), getUser)
+    .post(validateParams('id'), sendOrAcceptRequest)
+    .delete(validateParams('id'), unfriendOrCancelFriendRequest)
+
+router.post('/:id/block', validateParams('id'), blockUser)
+router.post('/:id/unblock', validateParams('id'), unblockUser)

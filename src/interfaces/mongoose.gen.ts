@@ -8,6 +8,372 @@
 import mongoose from "mongoose";
 
 /**
+ * Lean version of MessageReactionDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `MessageDocument.toObject()`.
+ * ```
+ * const messageObject = message.toObject();
+ * ```
+ */
+export type MessageReaction = {
+  user: User["_id"] | User;
+  emoji: string;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Lean version of MessageDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `MessageDocument.toObject()`. To avoid conflicts with model names, use the type alias `MessageObject`.
+ * ```
+ * const messageObject = message.toObject();
+ * ```
+ */
+export type Message = {
+  thread: Thread["_id"] | Thread;
+  user: User["_id"] | User;
+  text?: string;
+  reactions: MessageReaction[];
+  replyTo?: Message["_id"] | Message;
+  replyToStatus?: Status["_id"] | Status;
+  media?: string;
+  mediaType?: "image" | "video" | "audio" | "any";
+  seenBy: (User["_id"] | User)[];
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Lean version of MessageDocument (type alias of `Message`)
+ *
+ * Use this type alias to avoid conflicts with model names:
+ * ```
+ * import { Message } from "../models"
+ * import { MessageObject } from "../interfaces/mongoose.gen.ts"
+ *
+ * const messageObject: MessageObject = message.toObject();
+ * ```
+ */
+export type MessageObject = Message;
+
+/**
+ * Mongoose Query type
+ *
+ * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
+ */
+export type MessageQuery = mongoose.Query<
+  any,
+  MessageDocument,
+  MessageQueries
+> &
+  MessageQueries;
+
+/**
+ * Mongoose Query helper types
+ *
+ * This type represents `MessageSchema.query`. For most use cases, you should not need to use this type explicitly.
+ */
+export type MessageQueries = {};
+
+export type MessageMethods = {};
+
+export type MessageStatics = {};
+
+/**
+ * Mongoose Model type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const Message = mongoose.model<MessageDocument, MessageModel>("Message", MessageSchema);
+ * ```
+ */
+export type MessageModel = mongoose.Model<MessageDocument, MessageQueries> &
+  MessageStatics;
+
+/**
+ * Mongoose Schema type
+ *
+ * Assign this type to new Message schema instances:
+ * ```
+ * const MessageSchema: MessageSchema = new mongoose.Schema({ ... })
+ * ```
+ */
+export type MessageSchema = mongoose.Schema<
+  MessageDocument,
+  MessageModel,
+  MessageMethods,
+  MessageQueries
+>;
+
+/**
+ * Mongoose Subdocument type
+ *
+ * Type of `MessageDocument["reactions"]` element.
+ */
+export type MessageReactionDocument = mongoose.Types.Subdocument & {
+  user: UserDocument["_id"] | UserDocument;
+  emoji: string;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Mongoose Document type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const Message = mongoose.model<MessageDocument, MessageModel>("Message", MessageSchema);
+ * ```
+ */
+export type MessageDocument = mongoose.Document<
+  mongoose.Types.ObjectId,
+  MessageQueries
+> &
+  MessageMethods & {
+    thread: ThreadDocument["_id"] | ThreadDocument;
+    user: UserDocument["_id"] | UserDocument;
+    text?: string;
+    reactions: mongoose.Types.DocumentArray<MessageReactionDocument>;
+    replyTo?: MessageDocument["_id"] | MessageDocument;
+    replyToStatus?: StatusDocument["_id"] | StatusDocument;
+    media?: string;
+    mediaType?: "image" | "video" | "audio" | "any";
+    seenBy: mongoose.Types.Array<UserDocument["_id"] | UserDocument>;
+    _id: mongoose.Types.ObjectId;
+  };
+
+/**
+ * Lean version of StatusDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `StatusDocument.toObject()`. To avoid conflicts with model names, use the type alias `StatusObject`.
+ * ```
+ * const statusObject = status.toObject();
+ * ```
+ */
+export type Status = {
+  user: User["_id"] | User;
+  media: string;
+  mediaType?: "image" | "video";
+  caption?: string;
+  seenBy: (User["_id"] | User)[];
+  _id: mongoose.Types.ObjectId;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+/**
+ * Lean version of StatusDocument (type alias of `Status`)
+ *
+ * Use this type alias to avoid conflicts with model names:
+ * ```
+ * import { Status } from "../models"
+ * import { StatusObject } from "../interfaces/mongoose.gen.ts"
+ *
+ * const statusObject: StatusObject = status.toObject();
+ * ```
+ */
+export type StatusObject = Status;
+
+/**
+ * Mongoose Query type
+ *
+ * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
+ */
+export type StatusQuery = mongoose.Query<any, StatusDocument, StatusQueries> &
+  StatusQueries;
+
+/**
+ * Mongoose Query helper types
+ *
+ * This type represents `StatusSchema.query`. For most use cases, you should not need to use this type explicitly.
+ */
+export type StatusQueries = {};
+
+export type StatusMethods = {};
+
+export type StatusStatics = {};
+
+/**
+ * Mongoose Model type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const Status = mongoose.model<StatusDocument, StatusModel>("Status", StatusSchema);
+ * ```
+ */
+export type StatusModel = mongoose.Model<StatusDocument, StatusQueries> &
+  StatusStatics;
+
+/**
+ * Mongoose Schema type
+ *
+ * Assign this type to new Status schema instances:
+ * ```
+ * const StatusSchema: StatusSchema = new mongoose.Schema({ ... })
+ * ```
+ */
+export type StatusSchema = mongoose.Schema<
+  StatusDocument,
+  StatusModel,
+  StatusMethods,
+  StatusQueries
+>;
+
+/**
+ * Mongoose Document type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const Status = mongoose.model<StatusDocument, StatusModel>("Status", StatusSchema);
+ * ```
+ */
+export type StatusDocument = mongoose.Document<
+  mongoose.Types.ObjectId,
+  StatusQueries
+> &
+  StatusMethods & {
+    user: UserDocument["_id"] | UserDocument;
+    media: string;
+    mediaType?: "image" | "video";
+    caption?: string;
+    seenBy: mongoose.Types.Array<UserDocument["_id"] | UserDocument>;
+    _id: mongoose.Types.ObjectId;
+    createdAt?: Date;
+    updatedAt?: Date;
+  };
+
+/**
+ * Lean version of ThreadUserDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `ThreadDocument.toObject()`.
+ * ```
+ * const threadObject = thread.toObject();
+ * ```
+ */
+export type ThreadUser = {
+  user: User["_id"] | User;
+  isInvite?: boolean;
+  isAdmin?: boolean;
+  isNotificationMuted?: boolean;
+  _id: mongoose.Types.ObjectId;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+/**
+ * Lean version of ThreadDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `ThreadDocument.toObject()`. To avoid conflicts with model names, use the type alias `ThreadObject`.
+ * ```
+ * const threadObject = thread.toObject();
+ * ```
+ */
+export type Thread = {
+  isPrivate?: boolean;
+  title?: string;
+  users: ThreadUser[];
+  lastMessaged?: Date;
+  identifier?: string;
+  _id: mongoose.Types.ObjectId;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+/**
+ * Lean version of ThreadDocument (type alias of `Thread`)
+ *
+ * Use this type alias to avoid conflicts with model names:
+ * ```
+ * import { Thread } from "../models"
+ * import { ThreadObject } from "../interfaces/mongoose.gen.ts"
+ *
+ * const threadObject: ThreadObject = thread.toObject();
+ * ```
+ */
+export type ThreadObject = Thread;
+
+/**
+ * Mongoose Query type
+ *
+ * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
+ */
+export type ThreadQuery = mongoose.Query<any, ThreadDocument, ThreadQueries> &
+  ThreadQueries;
+
+/**
+ * Mongoose Query helper types
+ *
+ * This type represents `ThreadSchema.query`. For most use cases, you should not need to use this type explicitly.
+ */
+export type ThreadQueries = {};
+
+export type ThreadMethods = {};
+
+export type ThreadStatics = {};
+
+/**
+ * Mongoose Model type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const Thread = mongoose.model<ThreadDocument, ThreadModel>("Thread", ThreadSchema);
+ * ```
+ */
+export type ThreadModel = mongoose.Model<ThreadDocument, ThreadQueries> &
+  ThreadStatics;
+
+/**
+ * Mongoose Schema type
+ *
+ * Assign this type to new Thread schema instances:
+ * ```
+ * const ThreadSchema: ThreadSchema = new mongoose.Schema({ ... })
+ * ```
+ */
+export type ThreadSchema = mongoose.Schema<
+  ThreadDocument,
+  ThreadModel,
+  ThreadMethods,
+  ThreadQueries
+>;
+
+/**
+ * Mongoose Subdocument type
+ *
+ * Type of `ThreadDocument["users"]` element.
+ */
+export type ThreadUserDocument = mongoose.Types.Subdocument & {
+  user: UserDocument["_id"] | UserDocument;
+  isInvite?: boolean;
+  isAdmin?: boolean;
+  isNotificationMuted?: boolean;
+  _id: mongoose.Types.ObjectId;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+/**
+ * Mongoose Document type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const Thread = mongoose.model<ThreadDocument, ThreadModel>("Thread", ThreadSchema);
+ * ```
+ */
+export type ThreadDocument = mongoose.Document<
+  mongoose.Types.ObjectId,
+  ThreadQueries
+> &
+  ThreadMethods & {
+    isPrivate?: boolean;
+    title?: string;
+    users: mongoose.Types.DocumentArray<ThreadUserDocument>;
+    lastMessaged?: Date;
+    identifier?: string;
+    _id: mongoose.Types.ObjectId;
+    createdAt?: Date;
+    updatedAt?: Date;
+  };
+
+/**
  * Lean version of UserDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`. To avoid conflicts with model names, use the type alias `UserObject`.
@@ -29,6 +395,17 @@ export type User = {
   secondaryEmailOtp?: string;
   secondaryEmailOtpExpiry?: number;
   isSecondaryEmailVerified?: boolean;
+  lastSeen: Date;
+  sentFriendRequests: (User["_id"] | User)[];
+  friendRequests: (User["_id"] | User)[];
+  friends: (User["_id"] | User)[];
+  whoCanSeeBio?: "everyone" | "friends" | "nobody";
+  whoCanSeeActiveStatus?: "everyone" | "friends" | "nobody";
+  whoCanSeeAvatar?: "everyone" | "friends" | "nobody";
+  whoCanSeeStatus?: "everyone" | "friends" | "nobody";
+  whoCanSendYouMessage?: "everyone" | "friends";
+  whoCanSeeLastSeen?: "everyone" | "friends" | "nobody";
+  blocked: (User["_id"] | User)[];
   _id: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -122,6 +499,19 @@ export type UserDocument = mongoose.Document<
     secondaryEmailOtp?: string;
     secondaryEmailOtpExpiry?: number;
     isSecondaryEmailVerified?: boolean;
+    lastSeen: Date;
+    sentFriendRequests: mongoose.Types.Array<
+      UserDocument["_id"] | UserDocument
+    >;
+    friendRequests: mongoose.Types.Array<UserDocument["_id"] | UserDocument>;
+    friends: mongoose.Types.Array<UserDocument["_id"] | UserDocument>;
+    whoCanSeeBio?: "everyone" | "friends" | "nobody";
+    whoCanSeeActiveStatus?: "everyone" | "friends" | "nobody";
+    whoCanSeeAvatar?: "everyone" | "friends" | "nobody";
+    whoCanSeeStatus?: "everyone" | "friends" | "nobody";
+    whoCanSendYouMessage?: "everyone" | "friends";
+    whoCanSeeLastSeen?: "everyone" | "friends" | "nobody";
+    blocked: mongoose.Types.Array<UserDocument["_id"] | UserDocument>;
     _id: mongoose.Types.ObjectId;
     createdAt?: Date;
     updatedAt?: Date;

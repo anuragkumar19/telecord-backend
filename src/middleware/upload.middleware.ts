@@ -3,8 +3,8 @@ import { Handler } from 'express'
 import expressAsyncHandler from 'express-async-handler'
 import multer from 'multer'
 import { CloudinaryStorage } from 'multer-storage-cloudinary'
-import { UploadType } from '../constants'
 import cloudinary from '../config/cloudinary.config'
+import { UploadType } from '../constants'
 
 //  Multer Cloudinary Storage
 const storage = new CloudinaryStorage({

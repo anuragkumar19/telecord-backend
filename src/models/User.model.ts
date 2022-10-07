@@ -1,7 +1,10 @@
-import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { UserDocument, UserSchema, UserModel } from '../interfaces/mongoose.gen'
+import mongoose from 'mongoose'
+import { Permissions } from '../constants'
+import { UserDocument, UserModel, UserSchema } from '../interfaces/mongoose.gen'
+
+const PermissionScope = Object.values(Permissions)
 
 const UserSchema: UserSchema = new mongoose.Schema(
     {
@@ -21,9 +24,7 @@ const UserSchema: UserSchema = new mongoose.Schema(
         },
         avatar: {
             type: String,
-            default() {
-                return `https://ui-avatars.com/api/?background=random&name=$&size=480`
-            },
+            default: process.env.DEFAULT_AVATAR,
         },
         bio: {
             type: String,
@@ -46,6 +47,51 @@ const UserSchema: UserSchema = new mongoose.Schema(
             type: Boolean,
             default: false,
         },
+        lastSeen: {
+            type: Date,
+            required: true,
+            default: Date.now,
+        },
+
+        // Friends
+        sentFriendRequests: [
+            { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        ],
+        friendRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+        friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+
+        // Privacy settings
+        whoCanSeeBio: {
+            type: String,
+            enum: PermissionScope,
+            default: Permissions.EVERYONE,
+        },
+        whoCanSeeActiveStatus: {
+            type: String,
+            enum: PermissionScope,
+            default: Permissions.FRIENDS,
+        },
+        whoCanSeeAvatar: {
+            type: String,
+            enum: PermissionScope,
+            default: Permissions.EVERYONE,
+        },
+        whoCanSeeStatus: {
+            type: String,
+            enum: PermissionScope,
+            default: Permissions.FRIENDS,
+        },
+        whoCanSendYouMessage: {
+            type: String,
+            enum: [Permissions.EVERYONE, Permissions.FRIENDS],
+            default: Permissions.FRIENDS,
+        },
+        whoCanSeeLastSeen: {
+            type: String,
+            enum: PermissionScope,
+            default: Permissions.FRIENDS,
+        },
+        blocked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     },
     {
         timestamps: true,
@@ -112,6 +158,13 @@ UserSchema.methods.me = function () {
         isEmailVerified: this.isEmailVerified,
         secondaryEmail: this.secondaryEmail,
         isSecondaryEmailVerified: this.isSecondaryEmailVerified,
+        lastSeen: this.lastSeen,
+        whoCanSeeActiveStatus: this.whoCanSeeActiveStatus,
+        whoCanSeeAvatar: this.whoCanSeeAvatar,
+        whoCanSeeBio: this.whoCanSeeBio,
+        whoCanSeeStatus: this.whoCanSeeStatus,
+        whoCanSendYouMessage: this.whoCanSendYouMessage,
+        whoCanSeeLastSeen: this.whoCanSeeLastSeen,
         createdAt: this.createdAt,
         updatedAt: this.updatedAt,
     }
